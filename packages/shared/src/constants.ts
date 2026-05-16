@@ -23,3 +23,6 @@ export const VERSION_MAX_AGE_DAYS = 30
 export const BRUTE_FORCE_MAX_ATTEMPTS = 5
 export const BRUTE_FORCE_WINDOW_MS = 15 * 60 * 1000
 export const BRUTE_FORCE_LOCKOUT_MS = 30 * 1000
+
+export const NGINX_PID_FILE = '/run/nginx.pid'
+export const NGINX_STAGING_PORT = 18080
