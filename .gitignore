@@ -1,0 +1,82 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnp.*
+.yarn/cache
+.yarn/install-state.gz
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Vite / web
+.vite/
+apps/web/dist/
+apps/web/.vite/
+
+# Backend
+apps/backend/dist/
+
+# Coverage & test artifacts
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+*.log
+
+# Vitest cache
+.vitest-cache/
+
+# Local runtime data (mirrors the container's /data volume when running on host)
+/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Env files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+!.env.example
+
+# Editor / IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Docker (local overrides only — main compose file IS tracked)
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Temp
+tmp/
+.tmp/
+*.tmp
+
+# Explicitly TRACK .claude — do not ignore
+!.claude/
+!.claude/**
