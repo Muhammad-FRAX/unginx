@@ -1,0 +1,6 @@
+#!/command/execlineb -P
+# s6 run script for unginx-backend
+# Runs as the unprivileged unginx user
+fdmove -c 2 1
+s6-setuidgid unginx
+node /app/backend/dist/main.js

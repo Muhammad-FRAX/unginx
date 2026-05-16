@@ -1,0 +1,3 @@
+#!/command/execlineb -S0
+# Called when the backend exits. s6 will restart it automatically.
+foreground { echo "unginx-backend exited — s6 will restart" }

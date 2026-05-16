@@ -1,0 +1,4 @@
+#!/command/execlineb -P
+# s6 run script for nginx
+fdmove -c 2 1
+nginx -g "daemon off;"
