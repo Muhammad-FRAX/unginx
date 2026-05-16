@@ -20,6 +20,14 @@ app.setNotFoundHandler((_req, reply) => {
 })
 
 async function start() {
+  const devPort = process.env['DEV_PORT']
+  if (devPort) {
+    // In dev mode, listen on TCP so the Vite dev server proxy can reach us
+    await app.listen({ port: parseInt(devPort, 10), host: '127.0.0.1' })
+    app.log.info(`Backend listening on http://127.0.0.1:${devPort}`)
+    return
+  }
+
   if (fs.existsSync(socketPath)) {
     fs.unlinkSync(socketPath)
   }
