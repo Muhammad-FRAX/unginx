@@ -2,6 +2,22 @@ import Fastify from 'fastify'
 import fs from 'fs'
 import path from 'path'
 import { SOCKET_PATH } from '@unginx/shared'
+import { runMigrations } from './db/migrate.js'
+import { seedDatabase } from './db/seed.js'
+import { verifyToken } from './auth/jwt.js'
+import { parseCookies } from './auth/cookie.js'
+import db from './db/client.js'
+import authRoutes from './auth/routes.js'
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    jwtUser: {
+      id: number
+      username: string
+      must_change_password: boolean
+    } | null
+  }
+}
 
 const socketPath = process.env['SOCKET_PATH'] ?? SOCKET_PATH
 
@@ -11,18 +27,58 @@ const app = Fastify({
   },
 })
 
-app.get('/api/health', async () => {
-  return { ok: true, version: process.env['APP_VERSION'] ?? 'dev' }
-})
+app.decorateRequest('jwtUser', null)
 
-app.setNotFoundHandler((_req, reply) => {
-  reply.code(404).send({ error: 'Not found' })
-})
+const PUBLIC_PREFIXES = ['/api/auth/login', '/api/health']
 
 async function start() {
+  runMigrations()
+  await seedDatabase()
+
+  app.addHook('onRequest', async (request, reply) => {
+    if (PUBLIC_PREFIXES.some((p) => request.url.startsWith(p))) return
+
+    const cookies = parseCookies(request)
+    const token = cookies['unginx_token']
+    if (!token) {
+      return reply.code(401).send({ error: 'Unauthorized' })
+    }
+
+    try {
+      const claims = await verifyToken(token)
+      const userId = parseInt(claims.sub ?? '', 10)
+      if (isNaN(userId)) throw new Error('invalid sub')
+
+      const user = db
+        .prepare('SELECT id, username, must_change_password FROM user WHERE id = ?')
+        .get(userId) as { id: number; username: string; must_change_password: number } | undefined
+
+      if (!user) {
+        return reply.code(401).send({ error: 'Unauthorized' })
+      }
+
+      request.jwtUser = {
+        id: user.id,
+        username: user.username,
+        must_change_password: user.must_change_password === 1,
+      }
+    } catch {
+      return reply.code(401).send({ error: 'Unauthorized' })
+    }
+  })
+
+  await app.register(authRoutes)
+
+  app.get('/api/health', async () => {
+    return { ok: true, version: process.env['APP_VERSION'] ?? 'dev' }
+  })
+
+  app.setNotFoundHandler((_req, reply) => {
+    reply.code(404).send({ error: 'Not found' })
+  })
+
   const devPort = process.env['DEV_PORT']
   if (devPort) {
-    // In dev mode, listen on TCP so the Vite dev server proxy can reach us
     await app.listen({ port: parseInt(devPort, 10), host: '127.0.0.1' })
     app.log.info(`Backend listening on http://127.0.0.1:${devPort}`)
     return
@@ -32,11 +88,9 @@ async function start() {
     fs.unlinkSync(socketPath)
   }
 
-  const socketDir = path.dirname(socketPath)
-  fs.mkdirSync(socketDir, { recursive: true })
+  fs.mkdirSync(path.dirname(socketPath), { recursive: true })
 
   await app.listen({ path: socketPath })
-
   fs.chmodSync(socketPath, '666')
 
   app.log.info(`Backend listening on ${socketPath}`)
