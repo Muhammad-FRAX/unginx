@@ -47,16 +47,27 @@ RUN pnpm --filter @unginx/backend --prod deploy /build/backend-prod
 FROM nginx:alpine AS final
 
 ARG S6_OVERLAY_VERSION=3.2.0.2
+ARG TARGETARCH
 
 # Install Node.js 20, libcap (for setcap), curl (health checks)
 RUN apk add --no-cache nodejs libcap curl
 
-# Install s6-overlay v3
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp/s6-overlay-x86_64.tar.xz
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
- && tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz \
- && rm /tmp/s6-overlay-*.tar.xz
+# Install s6-overlay v3 — map Docker's TARGETARCH to s6-overlay's naming convention
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+      amd64)  S6_ARCH=x86_64  ;; \
+      arm64)  S6_ARCH=aarch64 ;; \
+      arm)    S6_ARCH=armhf   ;; \
+      386)    S6_ARCH=i686    ;; \
+      *)      echo "Unsupported TARGETARCH: ${TARGETARCH}" && exit 1 ;; \
+    esac; \
+    curl -fsSLo /tmp/s6-overlay-noarch.tar.xz \
+      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz"; \
+    curl -fsSLo /tmp/s6-overlay-arch.tar.xz \
+      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz"; \
+    tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz; \
+    tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz; \
+    rm /tmp/s6-overlay-noarch.tar.xz /tmp/s6-overlay-arch.tar.xz
 
 # Allow nginx to bind privileged ports as a non-root user
 RUN setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx \

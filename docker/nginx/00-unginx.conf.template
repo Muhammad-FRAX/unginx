@@ -32,7 +32,7 @@ server {
 
     # Fallback: nothing matched
     location / {
+        default_type text/plain;
         return 404 "No route configured at this path.\n";
-        add_header Content-Type text/plain;
     }
 }

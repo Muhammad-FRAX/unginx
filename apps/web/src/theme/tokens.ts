@@ -68,7 +68,8 @@ export function applyTheme(mode: 'light' | 'dark') {
 }
 
 export function getSystemPreference(): 'light' | 'dark' {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  // Check for explicit light preference; everything else (no preference, dark) → dark
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
 }
 
 export const THEME_STORAGE_KEY = 'unginx.theme'
