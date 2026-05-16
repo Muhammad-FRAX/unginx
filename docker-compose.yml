@@ -1,0 +1,40 @@
+# docker-compose.yml — project root
+#
+# Quickstart:
+#   docker compose up -d
+#   # then open http://localhost/__unginx
+#   # default credentials: unginx / unginx  (you'll be forced to change them on first login)
+#
+# To change the host port (e.g. 80 is busy on your machine), edit the "ports" line below.
+# To change the in-container port, edit APP_PORT in the "environment" block AND the
+# right-hand side of the "ports" mapping so they match.
+
+services:
+  unginx:
+    image: unginx:v1
+    container_name: unginx
+    restart: unless-stopped
+    ports:
+      # "HOST:CONTAINER" — left side is what you reach from the outside,
+      # right side must equal APP_PORT below.
+      - "80:80"
+    environment:
+      # The port nginx listens on inside the container. Default 80.
+      # If you change this, also update the right-hand side of the ports mapping above.
+      APP_PORT: "80"
+      # First-boot admin credentials. Optional — if omitted, defaults to unginx/unginx
+      # and the UI forces a password change on first login.
+      # UNGINX_USERNAME: "admin"
+      # UNGINX_PASSWORD: "change-me"
+      # Timezone for logs and history timestamps.
+      TZ: "UTC"
+    volumes:
+      # Named volume — persists routes DB, version history, nginx logs.
+      # Survives `docker compose down` and image upgrades.
+      - unginx_data:/data
+      # Optional: mount host folders here to serve them via File Routes in the UI.
+      # - /path/on/host/my-site:/data/sites/my-site:ro
+
+volumes:
+  unginx_data:
+    name: unginx_data
