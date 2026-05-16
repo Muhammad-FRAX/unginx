@@ -2,6 +2,12 @@
 # Generated from 00-unginx.conf.template at container start.
 # Do not edit by hand — changes will be lost on restart.
 
+# log_format must be at the http context level (included by nginx's http block via conf.d/)
+log_format unginx_combined '$remote_addr - $remote_user [$time_local] '
+                           '"$request" $status $body_bytes_sent '
+                           '"$http_referer" "$http_user_agent" '
+                           'rid=$unginx_route_id rt=$request_time';
+
 upstream unginx_backend {
     server unix:/run/unginx/backend.sock;
 }

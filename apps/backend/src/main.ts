@@ -8,6 +8,7 @@ import { verifyToken } from './auth/jwt.js'
 import { parseCookies } from './auth/cookie.js'
 import db from './db/client.js'
 import authRoutes from './auth/routes.js'
+import nginxRoutes from './pipeline/routes.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -68,6 +69,7 @@ async function start() {
   })
 
   await app.register(authRoutes)
+  await app.register(nginxRoutes)
 
   app.get('/api/health', async () => {
     return { ok: true, version: process.env['APP_VERSION'] ?? 'dev' }
