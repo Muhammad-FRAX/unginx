@@ -12,6 +12,9 @@
 services:
   unginx:
     image: unginx:v1
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     container_name: unginx
     restart: unless-stopped
     ports:
