@@ -1,4 +1,36 @@
+<div align="center">
+
+<img src="../apps/web/public/unginx-logo.png" alt="unginx logo" width="120" />
+
 # unginx
+
+**nginx, made friendly.** Manage reverse-proxy and static-file routes through a web admin — never touch `.conf` files.
+
+[![Node.js 20 LTS](https://img.shields.io/badge/Node.js-20_LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![nginx](https://img.shields.io/badge/powered_by-nginx-009900?logo=nginx&logoColor=white)](https://nginx.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Docker](https://img.shields.io/badge/Docker-image_%3C70MB-2496ED?logo=docker&logoColor=white)](https://github.com/Muhammad-FRAX/unginx)
+[![SQLite](https://img.shields.io/badge/SQLite-zero_ops-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![GitHub Stars](https://img.shields.io/github/stars/Muhammad-FRAX/unginx?style=flat&logo=github&color=black)](https://github.com/Muhammad-FRAX/unginx/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/Muhammad-FRAX/unginx?logo=github)](https://github.com/Muhammad-FRAX/unginx/issues)
+
+</div>
+
+---
+
+## Resources
+
+| Resource | Description |
+|---|---|
+| [Architecture & Plan](../plan.md) | Full technical spec, domain model, API surface, and build sequence |
+| [Style Guide](../frontend-megastyle.md) | Frontend design system, tokens, component patterns, and page recipes |
+| [Quickstart](#quickstart) | Get up and running with one command |
+| [Recovery commands](#recovery-commands) | Reset passwords, admin path, export/import config |
+| [Troubleshooting](#troubleshooting) | Common issues and fixes |
+| [Report a bug](https://github.com/Muhammad-FRAX/unginx/issues/new) | Open a GitHub issue |
+
+---
 
 > A friendly UI on top of nginx. Self-hosters manage reverse-proxy and static-file routes through a web admin, never touching `.conf` files.
 
