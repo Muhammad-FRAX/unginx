@@ -97,7 +97,7 @@ export function Shell({ theme, onToggle, username }: Props) {
         aria-label="Toggle sidebar"
       >
         <img
-          src="/unginx-logo.png"
+          src={`${import.meta.env.BASE_URL}unginx-logo.png`}
           alt="unginx"
           style={{
             height: collapsed ? 32 : 40,
@@ -137,7 +137,7 @@ export function Shell({ theme, onToggle, username }: Props) {
       }}>
         {!collapsed ? (
           <>
-            <img src="/unginx-logo.png" alt="unginx" style={{ height: 20, width: 'auto', opacity: 0.7 }} />
+            <img src={`${import.meta.env.BASE_URL}unginx-logo.png`} alt="unginx" style={{ height: 20, width: 'auto', opacity: 0.7 }} />
             <Text style={{
               fontSize: 10, fontWeight: 500, textTransform: 'uppercase',
               letterSpacing: '0.5px', color: 'var(--text-muted)',
@@ -146,7 +146,7 @@ export function Shell({ theme, onToggle, username }: Props) {
             </Text>
           </>
         ) : (
-          <img src="/unginx-logo.png" alt="unginx" style={{ height: 24, width: 'auto', opacity: 0.6 }} />
+          <img src={`${import.meta.env.BASE_URL}unginx-logo.png`} alt="unginx" style={{ height: 24, width: 'auto', opacity: 0.6 }} />
         )}
       </div>
     </div>

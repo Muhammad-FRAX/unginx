@@ -47,7 +47,7 @@ export default function Login() {
       }}>
         {/* Logo block */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <img src="/unginx-logo.png" alt="unginx" style={{ height: 64, marginBottom: 16 }} />
+          <img src={`${import.meta.env.BASE_URL}unginx-logo.png`} alt="unginx" style={{ height: 64, marginBottom: 16 }} />
           <Title level={3} style={{ margin: 0, color: 'var(--text-primary)' }}>unginx</Title>
           <Text style={{ color: 'var(--text-muted)', fontSize: 14 }}>nginx, made friendly.</Text>
         </div>

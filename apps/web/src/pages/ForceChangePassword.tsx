@@ -54,7 +54,7 @@ export default function ForceChangePassword() {
         borderRadius: 12,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <img src="/unginx-logo.png" alt="unginx" style={{ height: 56, marginBottom: 16 }} />
+          <img src={`${import.meta.env.BASE_URL}unginx-logo.png`} alt="unginx" style={{ height: 56, marginBottom: 16 }} />
           <Title level={3} style={{ margin: 0, marginBottom: 8, color: 'var(--text-primary)' }}>
             Set a New Password
           </Title>
