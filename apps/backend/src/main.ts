@@ -9,6 +9,13 @@ import { parseCookies } from './auth/cookie.js'
 import db from './db/client.js'
 import authRoutes from './auth/routes.js'
 import nginxRoutes from './pipeline/routes.js'
+import groupsApi from './routes-api/groups.js'
+import routesApi from './routes-api/routes.js'
+import fileRoutesApi from './routes-api/file-routes.js'
+import versionsApi from './routes-api/versions.js'
+import dataApi from './routes-api/data.js'
+import settingsApi from './routes-api/settings.js'
+import dashboardApi from './routes-api/dashboard.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -70,6 +77,13 @@ async function start() {
 
   await app.register(authRoutes)
   await app.register(nginxRoutes)
+  await app.register(groupsApi)
+  await app.register(routesApi)
+  await app.register(fileRoutesApi)
+  await app.register(versionsApi)
+  await app.register(dataApi)
+  await app.register(settingsApi)
+  await app.register(dashboardApi)
 
   app.get('/api/health', async () => {
     return { ok: true, version: process.env['APP_VERSION'] ?? 'dev' }

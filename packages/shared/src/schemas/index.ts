@@ -80,6 +80,33 @@ export const createGroupSchema = z.object({
   description: z.string().max(1000).nullable().optional(),
 })
 
+export const updateRouteSchema = createRouteSchema.partial()
+
+export const updateFileRouteSchema = createFileRouteSchema.partial()
+
+export const updateGroupSchema = z.object({
+  name: nameSchema.optional(),
+  description: z.string().max(1000).nullable().optional(),
+})
+
+export const bulkActionSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1),
+  action: z.enum(['enable', 'disable', 'delete', 'move']),
+  group_id: z.string().uuid().nullable().optional(),
+})
+
+export const importDataSchema = z.object({
+  routes: z.array(z.any()).optional(),
+  fileRoutes: z.array(z.any()).optional(),
+  groups: z.array(z.any()).optional(),
+})
+
+export type UpdateRouteInput = z.infer<typeof updateRouteSchema>
+export type UpdateFileRouteInput = z.infer<typeof updateFileRouteSchema>
+export type UpdateGroupInput = z.infer<typeof updateGroupSchema>
+export type BulkActionInput = z.infer<typeof bulkActionSchema>
+export type ImportDataInput = z.infer<typeof importDataSchema>
+
 export const loginSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
