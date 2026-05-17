@@ -116,6 +116,10 @@ RUN chmod +x \
       /etc/s6-overlay/s6-rc.d/unginx-backend/run \
       /etc/s6-overlay/s6-rc.d/unginx-backend/finish
 
+# Install the `unginx` recovery CLI wrapper
+COPY docker/unginx-cli.sh /usr/local/bin/unginx
+RUN chmod +x /usr/local/bin/unginx
+
 # Copy and configure the entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
