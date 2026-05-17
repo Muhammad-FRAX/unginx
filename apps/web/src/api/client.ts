@@ -8,10 +8,19 @@ export async function apiFetch<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
+  // Only declare a JSON content-type when we're actually sending a body —
+  // Fastify's parser rejects an empty body that claims to be JSON, which
+  // would otherwise break every "action" POST (logout, enable/disable, …).
+  const hasBody = options?.body != null
+  const headers: Record<string, string> = { ...(options?.headers as Record<string, string>) }
+  if (hasBody && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json'
+  }
+
   const res = await fetch(`${BASE}${path}`, {
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
+    headers,
   })
 
   if (res.status === 401) {
