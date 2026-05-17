@@ -60,13 +60,17 @@ desktop.ini
 ehthumbs.db
 $RECYCLE.BIN/
 
-# Logs
+# Logs (runtime log files — not source code)
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# But keep the backend source logs module
+!apps/backend/src/logs/
+!apps/backend/src/logs/**
 
 # Docker (local overrides only — main compose file IS tracked)
 docker-compose.override.yml

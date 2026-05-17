@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import fs from 'fs'
 import db from '../db/client.js'
 import { NGINX_PID_FILE } from '@unginx/shared'
+import { getCachedHealth } from '../health/index.js'
 
 interface DbVersion {
   version: number
@@ -62,30 +63,31 @@ const dashboardApi: FastifyPluginAsync = async (fastify) => {
     }
   })
 
-  // GET /api/health-status — latest cached health (populated by Phase 5 scheduler)
-  // For now returns current state from DB; Phase 5 will add SSE live status
+  // GET /api/health-status — latest cached health from the Phase 5 scheduler
   fastify.get('/api/health-status', async () => {
     const routes = db
-      .prepare('SELECT id, name, upstream_host, upstream_port, enabled FROM route WHERE enabled = 1')
-      .all() as Array<{ id: string; name: string; upstream_host: string; upstream_port: number; enabled: number }>
+      .prepare('SELECT id, name FROM route WHERE enabled = 1')
+      .all() as Array<{ id: string; name: string }>
 
     const fileRoutes = db
-      .prepare('SELECT id, name, folder_path, enabled FROM file_route WHERE enabled = 1')
-      .all() as Array<{ id: string; name: string; folder_path: string; enabled: number }>
+      .prepare('SELECT id, name FROM file_route WHERE enabled = 1')
+      .all() as Array<{ id: string; name: string }>
+
+    const cache = getCachedHealth()
+    const byId = new Map(cache.map((h) => [h.id, h.status]))
 
     return {
       routes: routes.map((r) => ({
         id: r.id,
         name: r.name,
         kind: 'route' as const,
-        // Status is 'unknown' until Phase 5 health scheduler runs
-        status: 'unknown' as const,
+        status: byId.get(r.id) ?? 'unknown',
       })),
       fileRoutes: fileRoutes.map((fr) => ({
         id: fr.id,
         name: fr.name,
         kind: 'file_route' as const,
-        status: 'unknown' as const,
+        status: byId.get(fr.id) ?? 'unknown',
       })),
     }
   })

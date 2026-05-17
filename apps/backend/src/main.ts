@@ -16,6 +16,10 @@ import versionsApi from './routes-api/versions.js'
 import dataApi from './routes-api/data.js'
 import settingsApi from './routes-api/settings.js'
 import dashboardApi from './routes-api/dashboard.js'
+import ssePlugin from './sse/index.js'
+import logsApi from './logs/routes.js'
+import { startHealthScheduler } from './health/index.js'
+import { startLogRotation } from './logs/rotate.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -84,6 +88,12 @@ async function start() {
   await app.register(dataApi)
   await app.register(settingsApi)
   await app.register(dashboardApi)
+  await app.register(ssePlugin)
+  await app.register(logsApi)
+
+  // Phase 5 background services
+  startHealthScheduler()
+  startLogRotation()
 
   app.get('/api/health', async () => {
     return { ok: true, version: process.env['APP_VERSION'] ?? 'dev' }
