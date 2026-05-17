@@ -10,7 +10,9 @@ class SSEClient {
 
   connect() {
     if (this.source) return
-    this.source = new EventSource('/__unginx/api/events', { withCredentials: true })
+    // ?subscribe=log opts this client in to log-tail events; without it the
+    // backend filters log events out and never starts watching the log file.
+    this.source = new EventSource('/__unginx/api/events?subscribe=log', { withCredentials: true })
 
     const eventTypes: Array<SSEEvent['event']> = ['health', 'log', 'config-changed', 'nginx-status', 'ping']
     for (const type of eventTypes) {
