@@ -1,5 +1,5 @@
 import type { EChartsOption } from 'echarts'
-import { lightTokens, darkTokens } from './tokens.js'
+import { lightTokens, darkTokens, type TokenMap } from './tokens.js'
 
 type EChartsTheme = NonNullable<EChartsOption['color']> extends Array<infer T> ? T : never
 
@@ -13,7 +13,7 @@ interface ChartTheme {
   colors: string[]
 }
 
-function buildEChartsTheme(tokens: typeof lightTokens): ChartTheme {
+function buildEChartsTheme(tokens: TokenMap): ChartTheme {
   return {
     backgroundColor: tokens.surface,
     textColor:       tokens.textMuted,

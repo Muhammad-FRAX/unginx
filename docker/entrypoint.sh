@@ -7,12 +7,13 @@ set -e
 APP_PORT="${APP_PORT:-80}"
 ADMIN_PATH="${ADMIN_PATH:-/__unginx}"
 
-# Render the nginx config template
+# Render the nginx config template into /etc/nginx/http.d so it's loaded
+# inside the http {} block (alpine includes http.d/*.conf there, not conf.d).
 sed \
   -e "s|\${APP_PORT}|${APP_PORT}|g" \
   -e "s|\${ADMIN_PATH}|${ADMIN_PATH}|g" \
-  /etc/nginx/conf.d/00-unginx.conf.template \
-  > /etc/nginx/conf.d/00-unginx.conf
+  /etc/nginx/http.d/00-unginx.conf.template \
+  > /etc/nginx/http.d/00-unginx.conf
 
 # Ensure /data subdirectories exist (volume may have been freshly mounted)
 mkdir -p \

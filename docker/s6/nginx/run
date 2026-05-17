@@ -1,4 +1,7 @@
 #!/command/execlineb -P
-# s6 run script for nginx
+# s6 run script for nginx.
+# Runs nginx as the `unginx` user so the backend (same user) can send SIGHUP
+# for reloads. The setcap on /usr/sbin/nginx allows it to still bind port 80.
 fdmove -c 2 1
+s6-setuidgid unginx
 nginx -g "daemon off;"

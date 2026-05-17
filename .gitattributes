@@ -1,0 +1,29 @@
+# Default: let Git auto-detect text files and normalize them in the repo to LF.
+* text=auto eol=lf
+
+# Force LF line endings on files that MUST be LF for Linux/Docker.
+# Windows users with core.autocrlf=true would otherwise check these out as CRLF
+# and break the container (shebangs become "#!/bin/sh\r", which the kernel
+# refuses to run with "no such file or directory").
+*.sh         text eol=lf
+Dockerfile*  text eol=lf
+docker/**    text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+
+# s6 run/finish scripts have no extension — match them explicitly.
+docker/s6/**/run     text eol=lf
+docker/s6/**/finish  text eol=lf
+docker/s6/**/type    text eol=lf
+
+# Binary files — never touch.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.tar  binary
+*.gz   binary

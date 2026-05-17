@@ -11,7 +11,9 @@
       "PowerShell(Get-ChildItem -Path \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\code-review\\\\unknown\" -Recurse -File | Select-Object FullName; Write-Output '--- security-guidance ---'; Get-ChildItem -Path \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\security-guidance\\\\unknown\" -Recurse -File | Select-Object FullName)",
       "PowerShell($paths = @\\(\"$env:USERPROFILE\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\code-review\\\\unknown\", \"$env:USERPROFILE\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\security-guidance\\\\unknown\"\\); foreach \\($p in $paths\\) { Write-Output \"=== $p ===\"; Get-ChildItem -Path $p -Recurse -File | ForEach-Object { Write-Output $_.FullName } })",
       "Skill(superpowers:brainstorming)",
-      "Skill(superpowers:brainstorming:*)"
+      "Skill(superpowers:brainstorming:*)",
+      "Bash(docker exec *)",
+      "Bash(docker compose *)"
     ]
   }
 }

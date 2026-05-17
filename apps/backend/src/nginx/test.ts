@@ -13,7 +13,7 @@ export async function runNginxTest(
   const confPath = configPath ?? path.join(STAGING_DIR, 'nginx.conf')
 
   return new Promise((resolve) => {
-    const child = spawn('nginx', ['-t', '-c', confPath], {
+    const child = spawn('nginx', ['-t', '-c', confPath, '-e', '/dev/stderr'], {
       stdio: ['ignore', 'pipe', 'pipe'],
     })
 

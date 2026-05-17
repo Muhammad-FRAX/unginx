@@ -25,8 +25,8 @@ import fs from 'fs'
 import { spawnSync } from 'child_process'
 import { randomUUID } from 'crypto'
 
-const NGINX_CONF_TEMPLATE = '/etc/nginx/conf.d/00-unginx.conf.template'
-const NGINX_CONF_DEST = '/etc/nginx/conf.d/00-unginx.conf'
+const NGINX_CONF_TEMPLATE = '/etc/nginx/http.d/00-unginx.conf.template'
+const NGINX_CONF_DEST = '/etc/nginx/http.d/00-unginx.conf'
 
 // ─── File-based advisory lock ────────────────────────────────────────────────
 // Uses O_EXCL creation for atomic cross-process mutual exclusion.

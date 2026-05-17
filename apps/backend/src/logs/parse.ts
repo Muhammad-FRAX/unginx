@@ -41,7 +41,9 @@ export function parseAccessLine(
 
 export function parseErrorLine(line: string): LogEvent | null {
   // nginx error lines start with: 2026/05/16 14:22:08 [error] ...
-  const m = /^(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}) \[(\w+)\]/.exec(line)
+  const m = /^(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}) \[(\w+)\]/.exec(line) as
+    | [string, string, string]
+    | null
   if (!m) return null
 
   const ts = new Date(m[1].replace(/\//g, '-').replace(' ', 'T')).toISOString()
@@ -64,7 +66,9 @@ function parseTimeLocal(s: string): string {
   // "16/May/2026:14:22:08 +0000"
   const m = /^(\d{2})\/(\w{3})\/(\d{4}):(\d{2}:\d{2}:\d{2}) ([+-]\d{4})$/.exec(s)
   if (!m) return new Date().toISOString()
-  const [, day, mon, year, time, tz] = m
+  const [, day, mon, year, time, tz] = m as unknown as [
+    string, string, string, string, string, string
+  ]
   const tzFormatted = `${tz.slice(0, 3)}:${tz.slice(3)}`
   return new Date(`${year}-${monthIndex(mon)}-${day}T${time}${tzFormatted}`).toISOString()
 }

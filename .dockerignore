@@ -1,0 +1,72 @@
+# .dockerignore — keeps the build context small and prevents host artifacts
+# (especially Windows-symlinked node_modules) from leaking into the image.
+
+# Dependencies — pnpm reinstalls these inside the builder
+**/node_modules
+.pnpm-store
+
+# Build output — regenerated inside the builder
+**/dist
+**/build
+**/out
+**/.vite
+**/*.tsbuildinfo
+**/.vitest-cache
+
+# Local runtime data (host-side mirror of the container's /data volume)
+/data
+**/*.sqlite
+**/*.sqlite-wal
+**/*.sqlite-shm
+
+# Runtime log directories (NOT source code)
+# Mirrors .gitignore: exclude any "logs" directory, then re-include source modules.
+**/logs
+!apps/backend/src/logs
+!apps/backend/src/logs/**
+!packages/*/src/logs
+!packages/*/src/logs/**
+**/*.log
+
+# Env files — must never end up in the image
+.env
+.env.*
+!.env.example
+
+# Editor / IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN
+
+# Git / VCS
+.git
+.gitignore
+.gitattributes
+
+# Docker meta — no need inside the image
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+.dockerignore
+
+# Coverage & test artifacts
+coverage
+.nyc_output
+playwright-report
+test-results
+
+# Tooling caches
+.turbo
+.cache
+
+# Project-specific tooling/skills (kept out of the image)
+.claude
+.cursor

@@ -1,6 +1,6 @@
 import { theme as antdTheme } from 'antd'
 import type { ThemeConfig } from 'antd'
-import { lightTokens, darkTokens } from './tokens.js'
+import { lightTokens, darkTokens, type TokenMap } from './tokens.js'
 
 const baseTokens = {
   fontSize:           14,
@@ -80,7 +80,7 @@ const baseComponents = {
   },
 }
 
-function buildAntdConfig(tokens: typeof lightTokens, isDark: boolean): ThemeConfig {
+function buildAntdConfig(tokens: TokenMap, isDark: boolean): ThemeConfig {
   return {
     algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
     token: {

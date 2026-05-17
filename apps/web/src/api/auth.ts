@@ -28,7 +28,8 @@ export function useLogout() {
     mutationFn: () => apiFetch<void>('/auth/logout', { method: 'POST' }),
     onSuccess: () => {
       qc.clear()
-      window.location.href = '/login'
+      // Match the SPA's basename so we land on the React Router /login route.
+      window.location.href = '/__unginx/login'
     },
   })
 }

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import db from '../db/client.js'
-import { renderConfig } from '../nginx/render.js'
+import { renderConfig, type RenderResult } from '../nginx/render.js'
 import { runNginxTest } from '../nginx/test.js'
 import { reloadNginx } from '../nginx/reload.js'
 import { parseNginxErrors } from '../nginx/parse-errors.js'
@@ -169,7 +169,7 @@ function ensureDir(dir: string): void {
   fs.mkdirSync(dir, { recursive: true })
 }
 
-function writeFragments(dir: string, fragments: Record<string, string>): void {
+function writeFragments(dir: string, fragments: RenderResult): void {
   ensureDir(dir)
   for (const [name, content] of Object.entries(fragments)) {
     fs.writeFileSync(path.join(dir, name), content, 'utf8')

@@ -1,6 +1,8 @@
 import Fastify from 'fastify'
+import fastifyStatic from '@fastify/static'
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { SOCKET_PATH } from '@unginx/shared'
 import { runMigrations } from './db/migrate.js'
 import { seedDatabase } from './db/seed.js'
@@ -33,6 +35,12 @@ declare module 'fastify' {
 
 const socketPath = process.env['SOCKET_PATH'] ?? SOCKET_PATH
 
+// Resolve the built frontend's location. In the container the backend lives at
+// /app/backend/dist/main.js and the SPA at /app/web/dist; that maps to
+// `../../web/dist`. Override via WEB_DIST for local/dev runs.
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const WEB_DIST = process.env['WEB_DIST'] ?? path.resolve(__dirname, '../../web/dist')
+
 const app = Fastify({
   logger: {
     level: process.env['LOG_LEVEL'] ?? 'info',
@@ -41,14 +49,21 @@ const app = Fastify({
 
 app.decorateRequest('jwtUser', null)
 
-const PUBLIC_PREFIXES = ['/api/auth/login', '/api/health']
+// Public API endpoints (no auth required). Anything not under /api/ is also
+// public — those are the SPA's static assets and HTML shell, which need to be
+// reachable without a session cookie so the user can actually see the login page.
+const PUBLIC_API_PREFIXES = ['/api/auth/login', '/api/health']
 
 async function start() {
   runMigrations()
   await seedDatabase()
 
   app.addHook('onRequest', async (request, reply) => {
-    if (PUBLIC_PREFIXES.some((p) => request.url.startsWith(p))) return
+    // Static SPA assets and HTML shell: always public.
+    if (!request.url.startsWith('/api/')) return
+
+    // Allow-listed public API endpoints.
+    if (PUBLIC_API_PREFIXES.some((p) => request.url.startsWith(p))) return
 
     const cookies = parseCookies(request)
     const token = cookies['unginx_token']
@@ -99,8 +114,31 @@ async function start() {
     return { ok: true, version: process.env['APP_VERSION'] ?? 'dev' }
   })
 
-  app.setNotFoundHandler((_req, reply) => {
-    reply.code(404).send({ error: 'Not found' })
+  // Serve the built React SPA. The bundle lives at /app/web/dist in the
+  // container; nginx strips the admin-path prefix before requests land here,
+  // so we mount the static plugin at the root prefix.
+  if (fs.existsSync(WEB_DIST)) {
+    await app.register(fastifyStatic, {
+      root: WEB_DIST,
+      prefix: '/',
+      // Disable the plugin's built-in wildcard so we control SPA fallback below.
+      wildcard: false,
+    })
+  } else {
+    app.log.warn(`WEB_DIST does not exist (${WEB_DIST}) — frontend will not be served.`)
+  }
+
+  // Single not-found handler for the whole app:
+  //   - /api/* misses → JSON 404 (so the frontend's fetch sees a real error)
+  //   - everything else → serve index.html (React Router takes over client-side)
+  app.setNotFoundHandler((request, reply) => {
+    if (request.url.startsWith('/api/')) {
+      return reply.code(404).send({ error: 'Not found' })
+    }
+    if (fs.existsSync(WEB_DIST)) {
+      return reply.sendFile('index.html')
+    }
+    return reply.code(404).send({ error: 'Frontend not built' })
   })
 
   const devPort = process.env['DEV_PORT']

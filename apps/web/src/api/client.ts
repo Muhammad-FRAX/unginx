@@ -15,7 +15,9 @@ export async function apiFetch<T>(
   })
 
   if (res.status === 401) {
-    window.location.href = '/login'
+    // Use the same prefix as BASE so we land on the SPA's /login route
+    // (BrowserRouter is mounted with basename="/__unginx").
+    window.location.href = '/__unginx/login'
     throw new ApiError(401, 'Unauthorized')
   }
 

@@ -46,7 +46,7 @@ export const darkTokens = {
   statusInfo:           '#38BDF8',
 } as const
 
-export type TokenMap = typeof lightTokens
+export type TokenMap = { readonly [K in keyof typeof lightTokens]: string }
 
 function tokensToCssVars(tokens: TokenMap): Record<string, string> {
   const vars: Record<string, string> = {}
