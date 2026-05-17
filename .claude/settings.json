@@ -13,7 +13,8 @@
       "Skill(superpowers:brainstorming)",
       "Skill(superpowers:brainstorming:*)",
       "Bash(docker exec *)",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(gh pr *)"
     ]
   }
 }
